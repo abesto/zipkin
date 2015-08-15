@@ -83,7 +83,7 @@ function do_gradle_release(){
   qualifier=$(echo "$TRAVIS_TAG" | cut -f2 -d-)
 
   # do not increment if the version is tentative ex. 1.0.0-rc1
-  if [[ -z "$qualifier" ]]; then
+  if [[ -n "$qualifier" ]]; then
     new_version=${major_minor_revision}
   else
     new_version=$(increment_version "${major_minor_revision}")
