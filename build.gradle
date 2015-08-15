@@ -73,6 +73,9 @@ allprojects { thisProject ->
                 released  = new Date()
                 vcsTag = "${project.version}"
             }
+            gpg {
+                sign = true
+            }
         }
     }
 }
