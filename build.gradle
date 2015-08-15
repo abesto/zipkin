@@ -67,6 +67,9 @@ allprojects { thisProject ->
             vcsUrl = 'https://github.com/openzipkin/zipkin.git'
             name = System.getenv('BINTRAY_ZIPKIN_PACKAGE') ?: "zipkin"
             userOrg = System.getenv('BINTRAY_ZIPKIN_ORG') ?: "openzipkin"
+            desc = "Zipkin is a distributed tracing system"
+            websiteUrl = "http://zipkin.io/"
+            issueTrackerUrl = "https://github.com/openzipkin/zipkin/issues"
             version {
                 name = "${project.version}"
                 desc = "Zipkin version ${project.version}"
