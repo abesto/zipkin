@@ -80,7 +80,7 @@ function publish_to_bintray(){
 function do_gradle_release(){
   # TODO this would be cleaner in release.versionPatterns
   major_minor_revision=$(echo "$TRAVIS_TAG" | cut -f1 -d-)
-  qualifier=$(echo "$TRAVIS_TAG" | cut -f1 -d-)
+  qualifier=$(echo "$TRAVIS_TAG" | cut -f2 -d-)
 
   # do not increment if the version is tentative ex. 1.0.0-rc1
   if [[ -z "$qualifier" ]]; then
