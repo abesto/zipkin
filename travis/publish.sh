@@ -72,7 +72,7 @@ function want_to_release_from_this_jdk(){
 }
 
 function publish_to_bintray(){
-  echo "[Publishing] Starting Snapshot Publish..."
+  echo "[Publishing] Publishing..."
   ./gradlew check bintrayUpload
   echo "[Publishing] Done"
 }
