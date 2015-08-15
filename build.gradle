@@ -84,11 +84,9 @@ release {
     failOnUnversionedFiles = failOnSnapshotDependencies
     failOnUpdateNeeded = true
     revertOnFail = true
-    tagTemplate = "${project.version}"
-    preCommitText = ''
-    preTagCommitMessage = '[RELEASE] - pre tag commit: '
-    tagCommitMessage = '[RELEASE] - creating tag: '
-    newVersionCommitMessage = '[RELEASE] - new version commit: '
+    preCommitText = '[RELEASE] - '
+    preTagCommitMessage = 'publish version: '
+    newVersionCommitMessage = 'new version: '
 
     git {
         requireBranch = 'master'
