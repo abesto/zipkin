@@ -78,9 +78,16 @@ function publish_to_bintray(){
 }
 
 function do_gradle_release(){
-  # do not increment if the version is tentative ex. 1.0.0-rc1
   # TODO this would be cleaner in release.versionPatterns
-  [[ "$TRAVIS_TAG" == *-* ]] && new_version=${TRAVIS_TAG} || new_version=$(increment_version "${TRAVIS_TAG}")
+  major_minor_revision=$(echo "$TRAVIS_TAG" | cut -f1 -d-)
+  qualifier=$(echo "$TRAVIS_TAG" | cut -f1 -d-)
+
+  # do not increment if the version is tentative ex. 1.0.0-rc1
+  if [[ -z "$qualifier" ]]; then
+    new_version=${major_minor_revision}
+  else
+    new_version=$(increment_version "${major_minor_revision}")
+  fi
 
   echo "[Publishing] Creating release commits (${TRAVIS_TAG}) -> (${new_version})..."
 
