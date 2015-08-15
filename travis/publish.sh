@@ -88,13 +88,14 @@ function do_gradle_release(){
   else
     new_version=$(increment_version "${major_minor_revision}")
   fi
+  new_version="${new_version}-SNAPSHOT"
 
   echo "[Publishing] Creating release commits (${TRAVIS_TAG}) -> (${new_version})..."
 
   git checkout -B master
 
   ./gradlew check \
-            release -Prelease.useAutomaticVersion=true -PreleaseVersion=${TRAVIS_TAG} -PnewVersion=${new_version}-SNAPSHOT \
+            release -Prelease.useAutomaticVersion=true -PreleaseVersion=${TRAVIS_TAG} -PnewVersion=${new_version} \
             --info
   echo "[Publishing] Done"
 }
