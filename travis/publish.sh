@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
-set -e
+set -ex
 
 declare -r PUBLISH_USING_JDK="oraclejdk7"
 
 function increment_version() {
+  # TODO this would be cleaner in release.versionPatterns
   local v=$1
   if [ -z $2 ]; then
      local rgx='^((?:[0-9]+\.)*)([0-9]+)($)'
@@ -70,14 +71,15 @@ function want_to_release_from_this_jdk(){
   fi
 }
 
-function publish_snapshots_to_bintray(){
+function publish_to_bintray(){
   echo "[Publishing] Starting Snapshot Publish..."
-  ./gradlew check bintrayUpload
+  ./gradlew check bintrayUpload --info
   echo "[Publishing] Done"
 }
 
-function publish_release_to_bintray(){
+function do_gradle_release(){
   # do not increment if the version is tentative ex. 1.0.0-rc1
+  # TODO this would be cleaner in release.versionPatterns
   [[ "$TRAVIS_TAG" == *-* ]] && new_version=${TRAVIS_TAG} || new_version=$(increment_version "${TRAVIS_TAG}")
 
   echo "[Publishing] Starting Release Publish (${TRAVIS_TAG}) new version (${new_version})..."
@@ -86,7 +88,7 @@ function publish_release_to_bintray(){
 
   ./gradlew check \
             release -Prelease.useAutomaticVersion=true -PreleaseVersion=${TRAVIS_TAG} -PnewVersion=${new_version}-SNAPSHOT \
-            bintrayUpload
+            --info
   echo "[Publishing] Done"
 }
 
@@ -102,9 +104,9 @@ action=run_tests
 if want_to_release_from_this_jdk && ! is_pull_request; then
   if build_started_by_tag; then
     check_travis_branch_equals_travis_tag
-    action=publish_release_to_bintray
+    action=do_gradle_release
   elif is_travis_branch_master; then
-    action=publish_snapshots_to_bintray
+    action=publish_to_bintray
   fi
 fi
 
