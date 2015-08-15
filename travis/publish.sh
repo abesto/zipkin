@@ -90,7 +90,9 @@ function do_gradle_release(){
   fi
   new_version="${new_version}-SNAPSHOT"
 
-  echo "[Publishing] Creating release commits (${TRAVIS_TAG}) -> (${new_version})..."
+  echo "[Publishing] Creating release commits"
+  echo "[Publishing]   Release version: ${TRAVIS_TAG})"
+  echo "[Publishing]   Post-release version: ${new_version}"
 
   git checkout -B master
 
