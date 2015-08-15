@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -ex
+set -e
 
 declare -r PUBLISH_USING_JDK="oraclejdk7"
 
@@ -73,7 +73,7 @@ function want_to_release_from_this_jdk(){
 
 function publish_to_bintray(){
   echo "[Publishing] Starting Snapshot Publish..."
-  ./gradlew check bintrayUpload --info
+  ./gradlew check bintrayUpload
   echo "[Publishing] Done"
 }
 
@@ -95,8 +95,7 @@ function do_gradle_release(){
   git checkout -B master
 
   ./gradlew check \
-            release -Prelease.useAutomaticVersion=true -PreleaseVersion=${TRAVIS_TAG} -PnewVersion=${new_version} \
-            --info
+            release -Prelease.useAutomaticVersion=true -PreleaseVersion=${TRAVIS_TAG} -PnewVersion=${new_version}
   echo "[Publishing] Done"
 }
 
