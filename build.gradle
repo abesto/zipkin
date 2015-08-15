@@ -54,8 +54,7 @@ allprojects { thisProject ->
 
         // Workaround: we don't want to publish anything from the root project.
         // https://github.com/bintray/gradle-bintray-plugin/issues/74
-        // Also don't publish anything if this is a SNAPSHOT release; those go to oss.jfrog.org
-        if (thisProject == rootProject || VersionNumber.parse(project.version).qualifier == "SNAPSHOT") {
+        if (thisProject == rootProject) {
             configurations = []
         } else {
             configurations = ['archives']
