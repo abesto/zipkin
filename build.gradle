@@ -1,3 +1,5 @@
+import org.gradle.util.VersionNumber
+
 buildscript {
     repositories { jcenter() }
     dependencies {
@@ -20,7 +22,7 @@ allprojects { thisProject ->
 
     // Following are workarounds to idea goal failing on:
     // Cannot infer Scala class path because..
-    // - no repository is declared in root project 
+    // - no repository is declared in root project
     repositories { jcenter() }
 
     // - no Scala library Jar was found
@@ -52,7 +54,8 @@ allprojects { thisProject ->
 
         // Workaround: we don't want to publish anything from the root project.
         // https://github.com/bintray/gradle-bintray-plugin/issues/74
-        if (thisProject == rootProject) {
+        // Also don't publish anything if this is a SNAPSHOT release; those go to oss.jfrog.org
+        if (thisProject == rootProject || VersionNumber.parse(project.version).qualifier == "SNAPSHOT") {
             configurations = []
         } else {
             configurations = ['archives']
