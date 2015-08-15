@@ -97,6 +97,11 @@ release {
     }
 }
 
+task createReleaseTag(overwrite: true, group: 'Release') {
+    // Zipkin is released by pushing tags manually, so
+    // we need the release plugin to NOT create tags when it runs.
+}
+
 subprojects { subproject ->
 
     apply from: "$rootDir/gradle/scalatest.gradle"
