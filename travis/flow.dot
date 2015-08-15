@@ -18,16 +18,16 @@ digraph releaseflow {
                 build_started_by_tag->check_travis_branch_equals_travis_tag [label=true]
                 build_started_by_tag->is_travis_branch_master [label=false]
 
-                check_travis_branch_equals_travis_tag->publish_release_to_bintray
+                check_travis_branch_equals_travis_tag->do_gradle_release
 
-                is_travis_branch_master->publish_snapshots_to_bintray [label=true]
+                is_travis_branch_master->publish_to_bintray [label=true]
                 is_travis_branch_master->run_tests [label=false]
         }
 
-        commit_on_branch[label="git commit && git push on a branch"]
+        commit_on_branch [label="git commit && git push on a branch / PR"]
 
         subgraph cluster_branch_travis {
-                label="Travis CI (publish.sh) - commit on a branch"
+                label="Travis CI (publish.sh) - commit on a branch / PR"
                 bgcolor="#f0f0f0"
                 subgraph cluster_branch_travis_pr_7 {
                         label="PR job with JDK 7"
@@ -87,8 +87,8 @@ digraph releaseflow {
                          label="{want_to_release_from_this_jdk|is_pull_request|build_started_by_tag|is_travis_branch_master}|{true|false|false|true}"
                          shape=record
                         ]
-                        m7_snap [label=publish_snapshots_to_bintray]
-                        master_travis_7_conditions->m7_snap
+                        m7_publish [label=publish_to_bintray]
+                        master_travis_7_conditions->m7_publish
                 }
                 subgraph cluster_master_travis_8 {
                         label="Job on JDK 8"
@@ -104,10 +104,10 @@ digraph releaseflow {
 
         merge_commit->master_travis_7_conditions [lhead=cluster_master_travis]
 
-        new_tag[label="Tag created and pushed"]
+        new_tag[label="Tag 1.0.0 or 1.0.0-rc1 pushed"]
 
         subgraph cluster_tag_travis {
-                label="Travis CI (publish.sh) - tag pushed"
+                label="Travis CI (publish.sh) - tag 1.0.0 or 1.0.0-rc1 pushed"
                 bgcolor="#fff0f0"
 
                 subgraph cluster_tag_travis_7 {
@@ -117,28 +117,25 @@ digraph releaseflow {
                          label="{want_to_release_from_this_jdk|is_pull_request|build_started_by_tag}|{true|false|true}"
                          shape=record
                         ]
-                        t7_rel [label=publish_release_to_bintray]
+                        t7_rel [label="do_gradle_release"]
                         is_rc [shape=diamond, label="Is the tag an -rc release?"]
 
                         tag_travis_7_conditions->t7_rel
                         t7_rel->is_rc
                         
-                        increment_version [label="new_version = increment_version TRAVIS_TAG"]
-                        leave_version [label="new_version = TRAVIS_TAG"]
+                        increment_version [label="new_version = 1.0.1-SNAPSHOT"]
+                        leave_version [label="new_version = 1.0.0-SNAPSHOT"]
+                        gradle_release [label="gradle release ..."]
+                        pre_tag_commit [label="commit: [RELEASE] publish version: $tag"]
+                        new_version_commit [label="commit: [RELEASE] new version: $new_version"]
+
                         is_rc->increment_version [label="no"]
                         is_rc->leave_version [label="yes"]
 
-                        gradle_release [label="gradle release -Prelease.useAutomaticVersion=true -PreleaseVersion=${TRAVIS_TAG} -PnewVersion=${new_version}-SNAPSHOT"]
-                        pre_tag_commit [label="pre-tag commit: change version to the release version"]
                         increment_version->gradle_release
                         leave_version->gradle_release
                         gradle_release->pre_tag_commit
-
-                        confusion [label="???"]
-                        pre_tag_commit->confusion
-                        
-                        gradle_upload [label="gradle bintrayUpload"]
-                        confusion->gradle_upload
+                        pre_tag_commit->new_version_commit
                 }
 
                 
@@ -154,7 +151,8 @@ digraph releaseflow {
                 }
                 
         }
-
+        
         new_tag->t8_run_tests [lhead=cluster_tag_travis]
-        pre_tag_commit->master_travis_7_conditions [lhead=cluster_master_travis]
+        pre_tag_commit->master_travis_7_conditions [lhead=cluster_master_travis, label="Push starts job"]
+        new_version_commit->master_travis_7_conditions [lhead=cluster_master_travis, label="Push starts job"]
 }
