@@ -1,48 +1,38 @@
 language: java
 sudo: false
-
 services:
-  - redis-server
-
+- redis-server
 jdk:
-  - oraclejdk7
-  - oraclejdk8
-
-# These directories are cached to S3 at the end of the build
+- oraclejdk7
+- oraclejdk8
 cache:
   directories:
-    - $HOME/.gradle/wrapper
-    - $HOME/.gradle/native
-    - $HOME/.gradle/daemon
-    - $HOME/.gradle/caches/jars-1
-    - $HOME/.gradle/caches/2.5
-
+  - "$HOME/.gradle/wrapper"
+  - "$HOME/.gradle/native"
+  - "$HOME/.gradle/daemon"
+  - "$HOME/.gradle/caches/jars-1"
+  - "$HOME/.gradle/caches/2.5"
 notifications:
   webhooks:
     urls:
-      - https://webhooks.gitter.im/e/637e968b45032d16ee26
+    - https://webhooks.gitter.im/e/637e968b45032d16ee26
     on_success: change
     on_failure: always
     on_start: false
-
+before_install:
+- git config --global user.email "${GH_USER_EMAIL}"
+- git config --global user.name "${GH_USER}"
+install: "/bin/true"
+before_script:
+- git remote set-url origin "https://${GH_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git"
+script:
+- "./travis/publish.sh"
 env:
   global:
-  - secure: CEz4O1RmixHJno2A/oUL/zF8WKlgmmUKbu78xrnC80G0CsxOx7eJa3RSVV4NA5uoy4eVvMZS3CsWYXpfl2XTfdkQsgGEQDBbBNaQX/y0oBBusqT3bzVmWu2Lh90zFmh8iWylvhOadIUhe/D+jfKKZrCfXjTekRiNC/oYPzEB16w=
-  - secure: hP05qbQEDObdiu3LivKfeK4tA9zV4i2Q4RcGhB4ufGE54nTSRfHeLuloVT1frP8jHeBB3w3w7CFTL6rtV94uCPy3iTpvqXrJJLlnP+8WF2EISzhAvA9oG0J4XxSXeFZ2+5xF7FbHFCCs7cwmJr5SOr15JT152T4geP5WJHlSysc=
-  - secure: AWjkKlDz6vvzOHtz/ufK2ahEZNkMVpBosovi0K+J715mw6GjhYav4HfORc4PmuV55uiXZ8pxhFEAS1x4Aq4VnOndE9vti0azBtxopwvcx9ZmDSOzSx62ovTxV9PwtQ8KC0wHFE0B5N2ENhhly/A4mvoNPEv5EodF/l1JzfSfXEg=
-  - secure: CR3d3i2qUuMqVxA1r8+mSsPXTEBp74bKShSLNwNm2mwYa0TSNNx0tnD5kkTJYKxQYmrRIwKqDFZdkD3hLrCXbp1bpI5XbkJL/fMEdCdbiuOo1xOr3q4oZEUSfige9RTOdUudII3JO1RcL8fPdEwjRQZut4Rqf6ueGqNbilMRSjU=
-  - secure: Vxl1MpMeWktJNCRbhsMUn5M8gzlyaqt+bYAzpe9gics/NmCFNNviDY/YsxcLJ0gCv5ZD4sw/L7dLE490fmAGzlq5i1gViNJ2gnDmr5benizhcnyc+h2BtUn9+uYOKO4sRxcVTL7WOfxAQ+S2/SvmMYVP2MJ9cqVbjAhtEF4d8zI=
-
-before_install:
-  - git config --global user.email "${GH_USER_EMAIL}"
-  - git config --global user.name "${GH_USER}"
-
-# Skip `./gradlew assemble`
-install: /bin/true
-
-before_script:
-  - git remote set-url origin "https://${GH_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git"
-
-script:
-  - ./travis/publish.sh
-
+  - secure: FRuI+RvVyhCkgmhOvFCVLtnkMd+KT47aSwuP5AL58L4Tlo7rE2QY79bRvtVcAsuefGHibspj06x5rDRL5Yxl7IfxZHBUtEwUelrFxaJyKtXUnxzeXKwHW4blrHybbJdCGDY1BPiCjgtI465SFc52a+KL75meMECMIrxNtR4Gl/ILCzl3sIArx9+rYIJwA1XufJr6re0pVbVVC8CsEEuMuoHT/WtEqIPMgTdPzcCYCFWjvtmfhzQfuP5DfYjnaZ3etlyeqniWhGGHrERZEnbD710vOKQm3aPfExibUo+Kj8oMCKQ9OL4P9+h9RWcb58i3nFoOgDNjvMX6R/ebt7yqnkoXMmss+/svzU6MRTXwsoK2qt/1BoQJD0BCVKYFFiZU+vETT5/gPhV1kO1naduK0lXg0i4Nz219CypjlevwMKbhqWy8Ze5XkHqDeJhUL6/7e9VwZC+Xzwal9z1FOa5Exy5Qi/+etNhv/RF22Ui6VTJBN/XVzy0WYN+baVvjj2RzWcqsFhnfw/U0z+hfD+pBwat33HluoeskPJHkPuyly75f5YnRT0HMi4Viey5m6QAGqmGmlfLenLhqnTULVZHoM70tDs4lysv7LDJJWJfmHr9Z2AfbcHCnTikXC6qz6MOHTsgfTJSUJF2xvZwjAz1WdH0PiT5S1jhEfQvHW0qISc0=
+  - secure: MGWySuOvYIDMDn14Wubrx5586DyVJnmPA/oHKQB5rfNi/DfpNKfZamceSOphZMU11xPxykt9UzfJzSzlYHHUpacgx7Uqh3QNSA7a+gEE1I+ZPWSiWNU4vpsm3cxY4fdgvrWvWGDc+/rRUrp2UExxq3QqK8+QbQGJva4URW6t8id50+8i1rusp9zgqqwCV9vit0Bferpu/JYO0+LEPcYKNojO0wPutxo/T1wb7IEC3MP4Ff+4QN8SQ1sBXgoAiIHYGRyOnTY3wOKW9sUuYgIrBCMpX9YRxN3FtlaIepy5VAyQYD21KfiSpYqI9UuGBjFW+c5FY/rty26xNzp9DVNOtw2ac0rxv80teIaUJduIYg4ybZ1rOvn0XZwQeU1IY67eeF6n58WRuTwziECJImHN01iAlCTWu9J73KyqShvex4Vxzdjk1w1RgN/icupSZWcFoAgqWcNkztZps1Np3fHRgO4Gufm1dhAZ0rqkaKtyN55EQL5ShZ/PyJeA0m28sJvv5e53VqbAjjno6g+sADU6/kTDDDiUgClSv4uYkOi22Gg/ulRIvGRjtaCIMpXKQHA9V9sIrpAhUZlsAdPzTuj48tLQ1lzqKhbfTzmhz3XcofvDv3u+aceBcEexRzRMvRvnMPydFsQ9FIEwpE4nOy/V/Go36UjuZUztrMkx37bgOZI=
+  - secure: tyamHJaPFAsoGOyZ2Zx8EaDvkZMILeDj6eSuMwabOtpH8HGK3J1YuqVo7/DXVNi4+u/owFzZ1BIhK89atZgamfORxEtzQv32cOgCIUj4Mf/c2TC/21HZ6v1fDI543cmUWJIicciGH2EVFl94cqU4qQJAM27DaJyB6gNM/U4V5rUNZ3w4mTZxHfOWBZnalU1QpCWhrsgPn35NovlnBfrB0VaWTw0P+eCi42V+Tw0Np2+y1F+8INgss6Xa8KW0oEbEB9rnT6hcaM34l7EcbhWG8ZB/hDoOWliJqumM8se88GJNlTHwR3o1E10h3aQFikXzkCfu28l3A3n74NbHydekNAvKPQRgIWlSKAGO94iT7xE512OCIz4mIFW+qxhFdjyicuFTVfoqLt3ePcnFQIiZNW8CkO6HZ+wfyYVyZ3/+1t3+ah9rxmpnK+QXHjO/AAFFcgK1E7xOt7XhlXm8tXaXmNP1s4x5byfIvsj1JNbEMradiwYpIMKuOOGw7RtDtMs/GbaiR+BNVJymyHAC6HGKDMTN3ulHfE7wpvb87DeBi25c9NXLlsBcLlZUgvMlPIDRFsOkZtzPNO1bYqQeQHSBJJ06BSowgKal7McZB4SWM90O3mXOUhwk1JY8As0BYrDkF98CQcdZLzKVNpxlrKvlJXKHREWLK7ACwV0g3w7hxIo=
+  - secure: rurR3mLBaJQv8uau+Y2jlCdz5JQ4lDlhL+JF52Z6cfcOxQIjzkJbXoDTIqtWwdu7kWz3O5IWFE1V4qXsgmmStueNKlpaCeJOQ9VVHUpDDipIaP2usdCe5+nrefbsXoGXsHI/JkZiHHXeL+pqsEnLQhVfQdMIk04qIUXuYB9u+lGGDh8i0M0S5RLdDeIheaXNp0FK0KOyFjZgk4b4iUa6Tw/CUn+Mb5MKarPlds+9clBa6VWJNmhh3BCFQrCPCxFKErJH7H8ztQnSuGyAWvev5Z19ZjY4BGMyf1Aor9do45O1y6yeXiUYEW2Na1PTukrLHrOTgXeYTpl+IHdGQzguNHSKEVUVHrcACausWxJlHW8p9zrc0MvT0nBE523qkJ1EYCtbqTUNRMrLdCRBLFU5AsrnLKfpsMYHLhTA0CqvK29khB1g+ix2ckaaQnEyDaIch7er/2gJQBxThmxToueTpd5b8O2/j2tPnwGdVSXKps9MF6sU6C1NkHfn7esStH2Lyt9bDg9irv3jYhyD/i36OLAWXunLCHDfdD8ECxHB8GGD2vZzrOktQge+Io/0/m0X0g97tPfQVcluRlf9QFAsgQVmVP0lGlK2mOiMdTX1yDZGjRkE1RrccZQXLWxutyqevHIMnCPBUFwGGzZCvhi4nBwauLKRIzSB47HVg+r/Vss=
+  - secure: H8Id2ZpkEC7nrPoV8TQmMqpf1anGK6TyKvq7hLY+hX/6dUk8TXMny+TcaBjL2I6mMMBPrv1COi5zNvmSWzviSyQ+luTvKKJ11z30ptegRfiAbsfuKc4qaREhyoAXab6xaL8KvpnxoIXS9zRw/Yxc+4AUik+7CCWkgetYVz/kQlSrDLn7L69EdAQnf9cwRxm6wHMGye4Vs8me2BDfhv2m3q9gfb9vpBhDOqQCxerErCntCFX+yk38THpTQqQ1VMRbvclR2FtS9WT+2UoOV6gdSA/hx5dFMrQfb3qK+L6Wynx7XOTLuDkeZsDH+DyWmMKE5Nhp0iEbFN8bCU/bzaDhXyVmGs4lU92+FJUhwurlUhi7uRUinCQPvgTXnOWZJZNiPlHKORvChec/uQawYmqSkBmCsrCSrRXuUmnObXBpaJ7hvJpAjMj9p2y05CLVl+L6vk3QtPSZaIUepnlz0TQFdWm2CjyF/DFZSrLwZBv1p0xRnn1AIaK2q+mD+lLgo8jHhkxY+XdFoch4Ha0tUZwpkLPuUkoSFhWCAWX9tUpTZ3xsfw8OksdcaBDgrfaCJkvf42lM1pjwRPCmNyne2y1BmO/nKYFUToGRKBhfTCUGv4xw7Fxr3F1AP3GvZR2U07BrFbvQCgkIfjWovetOdSTown+iEhoUi+stBCkoyAYRBcw=
+  - secure: rpPivZsnzaOVhfKq0mVJlNBAMBtqZhp84Qw2W8c+MHdBC3jvaAgzGjHBecuDidEdkrr/+KKNjHpj8q8G8WPDWkPcBTm0LFUAPgF2WrtJ2KZgdxHdzF2edNhI/Hx6xlTYb3Qjq0k+cPNDm8SEeupyXKIjPbqmU/Ju9xRG3P5QpPj1eyvPDJjuD0CZ2EatY6wDdvLeAUy6dfebIA1xK1mvhdf213PNDV3Xy8xSiAPfrUQdw2Q2sEFcWNw95aLwDJ110hdvBdrndM8RoxLFdDxLL+egTx0ofpz1XwJ+Q9i6djt8eJGDBX0WgtSi4hsrW9feQaYNLqBHv6N5b/mAACgyuBKfdch7rtUlD2P47dVn9po8nx0HDYdNyARXf6zpgrrS1yDrvFHRNTQa2ePkXCnzN+j2wMog0pYIIIY8B7GBCvRgV7EWJmntGilYjdRyMWiY/fKEY1OengxnwrDEbILQYdXlkbVHIaz5LvZEOReSUhUm3+7c6KnZox8QLCK+ltreJuOhhT7oJoIAaO620UnxHllnivrFp+fQHRSlMr5v28lUPI6CsUPnWhuJxGXv7m/1hQuTPEGRsYu0ZUth4QTmUaaipW4mAzi9dlCSFAzp40hE37WoTEV41kbOnmn87J8ygmouDFYEDhRnOWSHkViGntf2NkdUXrt4BYILc+IcENE=
+  - secure: MwEo+H9j/SygZkVIRRqnVC6EDJPUCl6JdH73Djfstg80xXStssK0uJCGlpRD7L7dZCtE+ecxO8QC3q23Ye+mKmDf8LmwFzHDtb4Fsr8h+5z3J3N6xP9m9nT5beUOG18kqPeROnZFJhEGpNYYCaLlHBQr2kvqH5X7g7C5foyhZcaRi4CvraA0kkXp8ni9Esz1lMBYwqYe1iME6ZuBu9e1O/It2hW3RLxKJp6GDCTvrn+lFDfsHsal08Y+i6Lsmz1WjSPoshXrxMv2/cEoBhtYTrh98HcTaDz/hAjSo/b98J5jhl+qRxS6yGz9hC41iFf/EAoO+/3Z7LPkReWJYYeujC4NfOZEZfD4FT00bjrZYxi9ZHaHJuuRAjV4ffC0hgjp95IBe1sjRQ3UD/KoMqfAcktQ3XV5Cr/oAnCaXcv3RvJ47ro1olhdWYfogmVCxsR9ATSkLpnj+mpnQ0gHOcIqJGXKKIxyZliH3ysMAoTG/cOj7zoJ6Rnpj4GotfsF/xNDdzXthyO35RwZttnHQyeuik+RCTxEK8W8ygSqlUBARxFI16QpLEXS3LYn0dseFBDiX+MFkUZ2naAl/toatGSWKsu0nkFb+NSHGCxy5zuMVmrk1uR7Z5M1irWzCUo/UM0P4oIFYJx/2KoaITrIyj9buXU7dOmIXDQgXFM9BJu7xiw=
