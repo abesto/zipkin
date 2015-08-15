@@ -18,10 +18,10 @@ function increment_version() {
 
 function build_started_by_tag(){
   if [ "${TRAVIS_TAG}" == "" ]; then
-    echo "[Publishing] This build was not started by a tag, starting snapshot release"
+    echo "[Publishing] This build was not started by a tag, publishing"
     return 1
   else
-    echo "[Publishing] This build was started by the tag ${TRAVIS_TAG}, starting non-snapshot release"
+    echo "[Publishing] This build was started by the tag ${TRAVIS_TAG}, creating release commits"
     return 0
   fi
 }
@@ -82,7 +82,7 @@ function do_gradle_release(){
   # TODO this would be cleaner in release.versionPatterns
   [[ "$TRAVIS_TAG" == *-* ]] && new_version=${TRAVIS_TAG} || new_version=$(increment_version "${TRAVIS_TAG}")
 
-  echo "[Publishing] Starting Release Publish (${TRAVIS_TAG}) new version (${new_version})..."
+  echo "[Publishing] Creating release commits (${TRAVIS_TAG}) -> (${new_version})..."
 
   git checkout -B master
 
