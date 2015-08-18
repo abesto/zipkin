@@ -106,6 +106,10 @@ release {
     preTagCommitMessage = 'publish version: '
     newVersionCommitMessage = 'new version: '
 
+    // Building during the release job on Travis is not useful at all
+    // We save time, and will run the build and tests in the publish job
+    buildTasks = []
+
     git {
         requireBranch = 'master'
         pushToRemote = 'origin'
