@@ -96,7 +96,7 @@ function do_gradle_release(){
 
   git checkout -B master
 
-  ./gradlew check \
+  ./gradlew --info check \
             release -Prelease.useAutomaticVersion=true -PreleaseVersion=${TRAVIS_TAG} -PnewVersion=${new_version}
   echo "[Publishing] Done"
 }
