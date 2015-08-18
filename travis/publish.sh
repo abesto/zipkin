@@ -107,7 +107,7 @@ function run_tests(){
 }
 
 while true; do
-	free -h
+	free -m
 	sleep 30
 done &
 
