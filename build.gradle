@@ -106,10 +106,6 @@ release {
     preTagCommitMessage = 'publish version: '
     newVersionCommitMessage = 'new version: '
 
-    // Building during the release job on Travis is not useful at all
-    // We save time, and will run the build and tests in the publish job
-    buildTasks = []
-
     git {
         requireBranch = 'master'
         pushToRemote = 'origin'
@@ -133,6 +129,12 @@ artifactory {
 task createReleaseTag(overwrite: true, group: 'Release') {
     // Zipkin is released by pushing tags manually, so
     // we need the release plugin to NOT create tags when it runs.
+}
+
+task runBuildTasks(overwrite: true, group: 'Release') {
+    // During the release process, building and testing in the job running `gradle release`
+    // is redundant. We can save time by running the build and tests only on commits to master
+    // and during the upload job.
 }
 
 subprojects { subproject ->
