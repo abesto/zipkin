@@ -96,7 +96,7 @@ function do_gradle_release(){
 
   git checkout -B master
 
-  ./gradlew --info --stacktrace check \
+  ./gradlew check \
             release -Prelease.useAutomaticVersion=true -PreleaseVersion=${TRAVIS_TAG} -PnewVersion=${new_version}
   echo "[Publishing] Done"
 }
@@ -105,6 +105,11 @@ function run_tests(){
   echo "[Not Publishing] Running tests then exiting."
   ./gradlew check
 }
+
+while true; do
+	free -h
+	sleep 30
+done &
 
 #----------------------
 # MAIN
