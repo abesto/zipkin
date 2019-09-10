@@ -1,0 +1,36 @@
+name: Java CI
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    
+    services:
+      rabbitmq:
+        image: rabbitmq
+        ports:
+          - 5672:5672
+
+    steps:
+    - uses: actions/checkout@v1
+    
+    # Not OpenJDK because this GitHub Action is in the process of
+    # defaulting to OpenJDK: https://github.com/actions/setup-java/issues/13
+    # (currently uses Zulu)
+    - name: Set up JDK 11
+      uses: actions/setup-java@v1
+      with:
+        java-version: 1.11
+        
+    # Required for Elasticsearch 5 (See https://github.com/docker-library/docs/tree/master/elasticsearch#host-setup)
+    - name: Set max_map_count for Elasticsearch 5
+      run: sudo sysctl -w vm.max_map_count=262144
+      
+    # Quiet Maven invoker logs (Downloading... when running zipkin-server/src/it)
+    - name: Quiet Maven envoker logs
+      run: echo "MAVEN_OPTS='-Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn'" > ~/.mavenrc
+      
+    - name: Build and test
+      run: ./mvnw install -DskipTests=true -Dlicense.skip=true -Dmaven.javadoc.skip=true -B -V
